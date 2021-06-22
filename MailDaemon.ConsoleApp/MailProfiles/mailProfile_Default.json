@@ -1,0 +1,20 @@
+{
+	"sender":
+		{
+			"address": "sergey.drozdov.1980@gmail.com",
+			"name": "Sergey Drozdov"
+		},
+	"subject": "Mail subject",
+	"template": ".\\MailTemplates\\MailBody_Default.html",
+	"attachments": [
+		{
+			"path": "D:\\Development\\MailDaemon\\Source\\MailDaemon\\MailDaemon.ConsoleApp\\Attachments\\readme.md"
+		}
+	],
+	"recipients": [
+		{
+			"address": "sergey.drozdov.1980@gmail.com",
+			"name": "Sergey"
+		}
+	]
+}
