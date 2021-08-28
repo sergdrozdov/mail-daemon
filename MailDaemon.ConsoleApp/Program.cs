@@ -204,6 +204,7 @@ namespace BlackNight.MailDaemon.ConsoleApp
 					{
 						Console.ForegroundColor = ConsoleColor.Cyan;
 						Console.WriteLine($"--- Send demo to sender address: {mailDaemon.MailProfile.Sender.Address} ---");
+						Console.ForegroundColor = ConsoleColor.White;
 					}
 
 					if (!mailDaemon.JustValidate)
@@ -217,6 +218,7 @@ namespace BlackNight.MailDaemon.ConsoleApp
 						{
 							Console.ForegroundColor = ConsoleColor.Green;
 							Console.WriteLine("--- Sent ---");
+							Console.ForegroundColor = ConsoleColor.White;
 							Console.WriteLine("");
 						}
 					}
@@ -260,6 +262,7 @@ namespace BlackNight.MailDaemon.ConsoleApp
 					report.AppendLine($"<div>Mail profile: '{mailDaemon.MailProfileFilename}'</div>");
 					report.AppendLine($"<div>Mail template: '{mailDaemon.MailProfile.MailBodyTemplate}'</div>");
 					report.AppendLine("<br/>");
+					report.AppendLine($"<div><strong>Recipients:</strong></div>");
 					report.AppendLine($"<div>{recipientsReport}</div>");
 					report.AppendLine("</body>");
 					report.AppendLine("</html>");
@@ -269,6 +272,7 @@ namespace BlackNight.MailDaemon.ConsoleApp
 
 					Console.ForegroundColor = ConsoleColor.Yellow;
 					Console.WriteLine("--- Mails has been sent ---");
+					Console.ForegroundColor = ConsoleColor.White;
 				}
 				catch (Exception ex)
 				{

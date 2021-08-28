@@ -1,8 +1,7 @@
 {
   "profiles": {
     "MailDaemon.ConsoleApp": {
-      "commandName": "Project",
-      "commandLineArgs": "-d"
+      "commandName": "Project"
     }
   }
 }
