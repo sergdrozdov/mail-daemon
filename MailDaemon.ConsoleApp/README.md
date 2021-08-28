@@ -1,23 +1,24 @@
 ﻿Description
 -------------------------------------------------
-Create mail sending utility with configurable settings.
+Batch mail sending utility with configurable settings.
 
 
 Arguments
 -------------------------------------------------
--v      - validation mode.
--d      - send demo mail to sender.
+-v      - validation mode.  
+-d      - send demo mail to sender.  
 -h      - help information.
 
 
 Folders
 -------------------------------------------------
-MailProfiles – folder to store JSON mail profiles.
+MailProfiles – folder to store JSON mail profiles.  
 MailTemplates – folder to store mail templates.
 
 
 Mail profile
 -------------------------------------------------
+```
 mailProfile_Default.json
 {
     "sender":
@@ -49,12 +50,12 @@ mailProfile_Default.json
         }
     ]
 }
-
+```
 
 Text placeholders
 -------------------------------------------------
-{PERSON_NAME} – recipient name.
-{COMPANY_NAME} – recipient company name.
+\{PERSON_NAME\} – recipient name.  
+\{COMPANY_NAME\} – recipient company name.
 
 
 Validation mode

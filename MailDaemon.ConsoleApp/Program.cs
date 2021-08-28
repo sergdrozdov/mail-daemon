@@ -55,7 +55,7 @@ namespace BlackNight.MailDaemon.ConsoleApp
 			Console.WriteLine("=== BlackNight Mail Daemon 0.5 ===");
 			Console.WriteLine("Author:\t\tSergey Drozdov");
 			Console.WriteLine("Email:\t\tsergey.drozdov.1980@gmail.com");
-			Console.WriteLine("Website:\thttp://sd.blackball.lv/sergey-drozdov");
+			Console.WriteLine("Website:\thttps://sd.blackball.lv/sergey-drozdov");
 			Console.Write(Environment.NewLine);
 
 			if (displayHelp)
@@ -309,8 +309,8 @@ namespace BlackNight.MailDaemon.ConsoleApp
 
 		private static void WaitForExit()
 		{
+			Console.ForegroundColor = ConsoleColor.White;
 			Console.WriteLine("");
-			Console.ForegroundColor = ConsoleColor.Yellow;
 			Console.Write("Press any key to exit...");
 			Console.ReadKey();
 		}
