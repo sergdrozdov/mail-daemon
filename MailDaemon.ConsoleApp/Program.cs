@@ -20,12 +20,7 @@ namespace BlackNight.MailDaemon.ConsoleApp
 			var mailDaemon = new MailDaemon();
 			var mailAgent = new MailAgent();
 
-			if (args.Length == 0)
-			{
-				DisplayErrorMessage("Arguments list cannot be empty. Use -h for help.");
-				return;
-			}
-			else
+            if (args.Length > 0)
 			{
 				try
 				{
