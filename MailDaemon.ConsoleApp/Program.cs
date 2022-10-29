@@ -13,7 +13,7 @@ namespace BlackNight.MailDaemon.ConsoleApp
         {
 			IConfigurationRoot configuration = new ConfigurationBuilder()
 				.SetBasePath(Directory.GetCurrentDirectory())
-				.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+				.AddJsonFile("appSettings.json", optional: true, reloadOnChange: true)
 				.AddEnvironmentVariables().Build();
 			
 			var displayHelp = false;
@@ -47,7 +47,7 @@ namespace BlackNight.MailDaemon.ConsoleApp
 				}
 			}
 
-			Console.WriteLine("=== BlackNight Mail Daemon 0.5 ===");
+			Console.WriteLine("=== BlackNight Mail Daemon 0.6 ===");
 			Console.WriteLine("Author:\t\tSergey Drozdov");
 			Console.WriteLine("Email:\t\tsergey.drozdov.1980@gmail.com");
 			Console.WriteLine("Website:\thttps://sd.blackball.lv/sergey-drozdov");
@@ -56,7 +56,7 @@ namespace BlackNight.MailDaemon.ConsoleApp
 			if (displayHelp)
 			{
 				Console.WriteLine("Description:");
-				Console.WriteLine("-v\t\tValidation mode to veryfy mail profile integrity. With this argument mails not sending to recipients.");
+				Console.WriteLine("-v\t\tValidation mode to verify mail profile integrity. With this argument mails not sending to recipients.");
 				Console.WriteLine("-d\t\tSend demo mail only to sender. With this argument mails not sending to recipients.");
 				WaitForExit();
 				return;
