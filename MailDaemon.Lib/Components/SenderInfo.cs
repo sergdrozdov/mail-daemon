@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace BlackNight.MailDaemon
+namespace BlackNight.MailDaemon.Core
 {
 	public class SenderInfo
 	{

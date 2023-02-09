@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace BlackNight.MailDaemon
+namespace BlackNight.MailDaemon.Core
 {
 	public class RecipientInfo
 	{
@@ -28,10 +28,19 @@ namespace BlackNight.MailDaemon
 		[JsonProperty("company")]
 		public string Company { get; set; }
 
-		[JsonProperty("language")]
+        [JsonProperty("contact_person")]
+        public string ContactPerson { get; set; }
+
+        [JsonProperty("language")]
 		public string Language { get; set; }
 
 		[JsonProperty("attachments")]
 		public List<AttachmentInfo> Attachments { get; set; }
+
+        /// <summary>
+        /// If true, the mail is not sending to the recipient.
+        /// </summary>
+        [JsonProperty("skip")]
+		public bool? Skip { get; set; }
 	}
 }

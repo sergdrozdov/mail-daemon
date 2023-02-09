@@ -1,7 +1,7 @@
 {
 	"sender":
 		{
-			"address": "sergey.drozdov.1980@gmail.com",
+			"address": "sergey.drozdov.0305@gmail.com",
 			"name": "Sergey Drozdov"
 		},
 	  "subject": "Mail subject",
@@ -13,7 +13,7 @@
 	],
 	"recipients": [
 		{
-			"address": "sergey.drozdov.1980@gmail.com",
+			"address": "sergey.drozdov.0305@gmail.com",
 			"name": "Sergey"
 		}
 	]

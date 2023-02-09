@@ -1,4 +1,4 @@
-﻿namespace BlackNight.MailDaemon
+﻿namespace BlackNight.MailDaemon.Core
 {
     public class MailSendResult
     {

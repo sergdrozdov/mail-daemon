@@ -4,20 +4,21 @@ using System.IO;
 using System.Net.Mail;
 using System.Text;
 using System.Threading;
+using BlackNight.MailDaemon.Core;
 
 namespace BlackNight.MailDaemon.ConsoleApp
 {
-    class Program
+    internal class Program
     {
-		static void Main(string[] args)
+        private static void Main(string[] args)
         {
-			IConfigurationRoot configuration = new ConfigurationBuilder()
+			var configuration = new ConfigurationBuilder()
 				.SetBasePath(Directory.GetCurrentDirectory())
 				.AddJsonFile("appSettings.json", optional: true, reloadOnChange: true)
 				.AddEnvironmentVariables().Build();
 			
 			var displayHelp = false;
-			var mailDaemon = new MailDaemon();
+			var mailDaemon = new Core.MailDaemon();
 			var mailAgent = new MailAgent();
 
             if (args.Length > 0)
@@ -47,9 +48,9 @@ namespace BlackNight.MailDaemon.ConsoleApp
 				}
 			}
 
-			Console.WriteLine("=== BlackNight Mail Daemon 0.6 ===");
+			Console.WriteLine("=== BlackNight Mail Daemon 0.7 ===");
 			Console.WriteLine("Author:\t\tSergey Drozdov");
-			Console.WriteLine("Email:\t\tsergey.drozdov.1980@gmail.com");
+			Console.WriteLine("Email:\t\tsergey.drozdov.0305@gmail.com");
 			Console.WriteLine("Website:\thttps://sd.blackball.lv/sergey-drozdov");
 			Console.Write(Environment.NewLine);
 
@@ -156,7 +157,14 @@ namespace BlackNight.MailDaemon.ConsoleApp
 					Console.WriteLine($"Subject: {mailMessage.Subject}");
 					Console.WriteLine($"Template: {(!string.IsNullOrEmpty(recipient.MailBodyTemplate) ? recipient.MailBodyTemplate : mailDaemon.MailProfile.MailBodyTemplate)}");
 
-					recipientReportInfo.AppendLine($"({counter}) {recipient.Company?.ToUpper()} {recipient.Name} <a href=\"mailto:{recipient.Address}\">{recipient.Address}</a>");
+					if (!string.IsNullOrEmpty(recipient.MailBodyTemplate))
+                        mailDaemon.MailProfile.MailBody = mailDaemon.ReadMailBodyTemplate(recipient.MailBodyTemplate);
+					else
+                        mailDaemon.MailProfile.MailBody = mailDaemon.ReadMailBodyTemplate(mailDaemon.MailProfile.MailBodyTemplate);
+
+                    if (recipient.Skip.GetValueOrDefault())
+                        recipientReportInfo.AppendLine("<div style=\"color: #999\">");
+                    recipientReportInfo.AppendLine($"({counter}) {recipient.Company?.ToUpper()} {recipient.Name} <a href=\"mailto:{recipient.Address}\">{recipient.Address}</a>");
 					recipientReportInfo.AppendLine($"<div>Subject: {mailMessage.Subject}</div>");
 
 					// attachments
@@ -195,29 +203,56 @@ namespace BlackNight.MailDaemon.ConsoleApp
 						}
 					}
 
-					if (mailDaemon.SendDemo)
+                    if (recipient.Skip.GetValueOrDefault())
+                    {
+                        recipientReportInfo.AppendLine("--- Skipped ---");
+                        recipientReportInfo.AppendLine("</div>");
+                    }
+
+                    if (mailDaemon.SendDemo)
 					{
 						Console.ForegroundColor = ConsoleColor.Cyan;
 						Console.WriteLine($"--- Send demo to sender address: {mailDaemon.MailProfile.Sender.Address} ---");
-						Console.ForegroundColor = ConsoleColor.White;
+						Console.ResetColor();
 					}
 
 					if (!mailDaemon.JustValidate)
 					{
-						var mailSendResult = mailAgent.Send(mailMessage);
-						if (!mailSendResult.Success)
-						{
-							DisplayErrorMessage(mailSendResult.Message);
-						}
-						else
-						{
-							Console.ForegroundColor = ConsoleColor.Green;
-							Console.WriteLine("--- Sent ---");
-							Console.ForegroundColor = ConsoleColor.White;
-							Console.WriteLine("");
-						}
+                        if (recipient.Skip.GetValueOrDefault())
+                        {
+                            Console.ForegroundColor = ConsoleColor.Cyan;
+                            Console.WriteLine("--- Skipped ---");
+                            Console.ResetColor();
+                            Console.WriteLine("");
+                        }
+                        else
+                        {
+                            var mailSendResult = mailAgent.Send(mailMessage);
+
+						    if (!mailSendResult.Success)
+						    {
+							    DisplayErrorMessage(mailSendResult.Message);
+						    }
+						    else
+						    {
+							    Console.ForegroundColor = ConsoleColor.Green;
+							    Console.WriteLine("--- Sent ---");
+							    Console.ResetColor();
+							    Console.WriteLine("");
+						    }
+                        }
 					}
-				}
+                    else
+                    {
+                        if (recipient.Skip.GetValueOrDefault())
+                        {
+                            Console.ForegroundColor = ConsoleColor.Cyan;
+                            Console.WriteLine("--- Skipped ---");
+                            Console.ResetColor();
+                        }
+						Console.WriteLine("");
+                    }
+                }
 				catch (Exception ex)
 				{
 					DisplayErrorMessage(ex.InnerException != null ? ex.InnerException.Message : ex.Message);

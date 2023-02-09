@@ -2,7 +2,7 @@
 using System.Net.Mime;
 using System.Text.RegularExpressions;
 
-namespace BlackNight.MailDaemon
+namespace BlackNight.MailDaemon.Core
 {
     public class Helpers
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace BlackNight.MailDaemon
+namespace BlackNight.MailDaemon.Core
 {
 	public class MailProfile
 	{

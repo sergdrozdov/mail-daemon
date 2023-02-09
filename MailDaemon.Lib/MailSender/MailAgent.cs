@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Mail;
 
-namespace BlackNight.MailDaemon
+namespace BlackNight.MailDaemon.Core
 {
 	public class MailAgent : IMailAgent
     {

@@ -5,11 +5,11 @@ using System.IO;
 using System.Net.Mail;
 using System.Text;
 
-namespace BlackNight.MailDaemon
+namespace BlackNight.MailDaemon.Core
 {
     public class MailDaemon : IMailDaemon
     {
-		public string MailProfileFilename { get; set; }		
+		public string MailProfileFilename { get; set; }
 				
 		/// <summary>
 		/// If true - no any mail send to recipients.
@@ -250,9 +250,10 @@ namespace BlackNight.MailDaemon
 			var body = !string.IsNullOrEmpty(recipientInfo.MailBody) ? recipientInfo.MailBody : MailProfile.MailBody;
 			body = body
 				.Replace("{PERSON_NAME}", recipientInfo.Name)
-				.Replace("{COMPANY_NAME}", recipientInfo.Company);
+				.Replace("{COMPANY_NAME}", recipientInfo.Company)
+                .Replace("{CONTACT_PERSON}", recipientInfo.ContactPerson);
 
-			return body;
+            return body;
 		}
 	}
 }
