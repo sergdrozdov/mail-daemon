@@ -9,37 +9,22 @@ namespace BlackNight.MailDaemon.Core
 {
     public class MailDaemon : IMailDaemon
     {
-		public string MailProfileFilename { get; set; }
-				
-		/// <summary>
-		/// If true - no any mail send to recipients.
-		/// </summary>
-		public bool JustValidate { get; set; }
+        public string MailProfileFilename { get; set; }
+        public bool JustValidate { get; set; }
+        public bool SendDemo { get; set; }
+        public int SendSleep { get; set; } = 1000;
+        public List<string> Errors { get; set; }
+        public List<string> Warnings { get; set; }
+        public MailProfile MailProfile { get; set; }
 
-		/// <summary>
-		/// If true - send demo mail to sender. No any mail send to recipients.
-		/// </summary>
-		public bool SendDemo { get; set; }
-		
-		/// <summary>
-		/// Delay sending mail to avoid stressful SMTP server.
-		/// </summary>
-		public int SendSleep { get; set; } = 1000;
-
-		public List<string> Errors { get; set; }
-
-		public List<string> Warnings { get; set; }
-
-		public MailProfile MailProfile { get; set; }						
-
-		public MailDaemon()
+        public MailDaemon()
 		{
 			MailProfile = new MailProfile();
 			Errors = new List<string>();
 			Warnings = new List<string>();
 		}
 
-		public void ReadMailProfile()
+        public void ReadMailProfile()
 		{
             try
             {
