@@ -318,9 +318,12 @@ namespace MailDaemon.ConsoleApp
 			{
 				WaitForExit();
 			}
+
+			if (mailDaemon.SendDemo)
+                WaitForExit();
 		}
 
-		private static void SetErrorMessagesStyle()
+        private static void SetErrorMessagesStyle()
 		{
 			Console.ForegroundColor = ConsoleColor.Red;
 		}
