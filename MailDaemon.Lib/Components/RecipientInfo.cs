@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace BlackNight.MailDaemon.Core
+namespace MailDaemon.Core
 {
 	public class RecipientInfo
 	{

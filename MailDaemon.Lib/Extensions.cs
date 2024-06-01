@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace BlackNight.MailDaemon.Core
+namespace MailDaemon.Core
 {
     public static class Extensions
     {

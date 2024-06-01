@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Net.Mail;
 
-namespace BlackNight.MailDaemon.Core
+namespace MailDaemon.Core
 {
-    public interface IMailDaemon
+    public interface IMailDaemonService
     {
         string MailProfileFilename { get; set; }
 

@@ -5,9 +5,9 @@ using System.IO;
 using System.Net.Mail;
 using System.Text;
 
-namespace BlackNight.MailDaemon.Core
+namespace MailDaemon.Core
 {
-    public class MailDaemon : IMailDaemon
+    public class MailDaemonService : IMailDaemonService
     {
         public string MailProfileFilename { get; set; }
         public bool JustValidate { get; set; }
@@ -17,7 +17,7 @@ namespace BlackNight.MailDaemon.Core
         public List<string> Warnings { get; set; }
         public MailProfile MailProfile { get; set; }
 
-        public MailDaemon()
+        public MailDaemonService()
 		{
 			MailProfile = new MailProfile();
 			Errors = new List<string>();

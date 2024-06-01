@@ -4,9 +4,9 @@ using System.IO;
 using System.Net.Mail;
 using System.Text;
 using System.Threading;
-using BlackNight.MailDaemon.Core;
+using MailDaemon.Core;
 
-namespace BlackNight.MailDaemon.ConsoleApp
+namespace MailDaemon.ConsoleApp
 {
     internal class Program
     {
@@ -18,7 +18,7 @@ namespace BlackNight.MailDaemon.ConsoleApp
 				.AddEnvironmentVariables().Build();
 			
 			var displayHelp = false;
-			var mailDaemon = new Core.MailDaemon();
+			var mailDaemon = new MailDaemonService();
 			var mailAgent = new MailAgent();
 
             if (args.Length > 0)
@@ -133,7 +133,7 @@ namespace BlackNight.MailDaemon.ConsoleApp
 				{
 					key = Console.ReadLine().ToLower();
 
-					if (key == "y" || key == "n")
+					if (key is "y" or "n")
 					{
 						confirmed = true;
 					}

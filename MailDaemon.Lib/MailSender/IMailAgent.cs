@@ -1,6 +1,6 @@
 ﻿using System.Net.Mail;
 
-namespace BlackNight.MailDaemon.Core
+namespace MailDaemon.Core
 {
     public interface IMailAgent
     {
