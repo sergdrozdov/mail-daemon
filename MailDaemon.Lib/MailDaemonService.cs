@@ -12,6 +12,7 @@ namespace MailDaemon.Core
         public string MailProfileFilename { get; set; }
         public bool JustValidate { get; set; }
         public bool SendDemo { get; set; }
+        public RecipientInfo DemoRecipient { get; set; }
         public int SendSleep { get; set; } = 1000;
         public List<string> Errors { get; set; }
         public List<string> Warnings { get; set; }
@@ -20,7 +21,8 @@ namespace MailDaemon.Core
         public MailDaemonService()
 		{
 			MailProfile = new MailProfile();
-			Errors = new List<string>();
+            DemoRecipient = new RecipientInfo();
+            Errors = new List<string>();
 			Warnings = new List<string>();
 		}
 
@@ -160,24 +162,24 @@ namespace MailDaemon.Core
 		{
 			var mailMessage = new MailMessage();		
 			
-			if (!SendDemo)
+			if (SendDemo)
 			{
-				// send as demo to sender
-				mailMessage.To.Add(GetMailAddress(recipientInfo.Address, recipientInfo.Name));
-				mailMessage.From = GetMailAddress(MailProfile.Sender.Address, MailProfile.Sender.Name);
-				mailMessage.ReplyToList.Add(mailMessage.From);
-				mailMessage.Headers.Add("Reply-To", MailProfile.Sender.Address);
+                // send as demo to sender
+                mailMessage.To.Add(GetMailAddress(DemoRecipient.Address, DemoRecipient.Name));
+                mailMessage.From = GetMailAddress(MailProfile.Sender.Address, MailProfile.Sender.Name);
+                mailMessage.ReplyToList.Add(mailMessage.From);
+                mailMessage.Headers.Add("Reply-To", MailProfile.Sender.Address);
 			}
 			else
 			{
-				// send to recipient
-				mailMessage.To.Add(GetMailAddress(MailProfile.Sender.Address, MailProfile.Sender.Name));
-				mailMessage.From = GetMailAddress(MailProfile.Sender.Address, MailProfile.Sender.Name);
-				mailMessage.ReplyToList.Add(mailMessage.From);
-				mailMessage.Headers.Add("Reply-To", MailProfile.Sender.Address);
+                // send to recipient
+                mailMessage.To.Add(GetMailAddress(recipientInfo.Address, recipientInfo.Name));
+                mailMessage.From = GetMailAddress(MailProfile.Sender.Address, MailProfile.Sender.Name);
+                mailMessage.ReplyToList.Add(mailMessage.From);
+                mailMessage.Headers.Add("Reply-To", MailProfile.Sender.Address);
 			}
 
-			mailMessage.SubjectEncoding = Encoding.UTF8;
+            mailMessage.SubjectEncoding = Encoding.UTF8;
 			mailMessage.Subject = FormatMessageSubject(recipientInfo);
 			if (SendDemo)
 				mailMessage.Subject += " [DEMO MAIL]";

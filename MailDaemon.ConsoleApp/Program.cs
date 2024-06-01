@@ -48,7 +48,7 @@ namespace MailDaemon.ConsoleApp
 				}
 			}
 
-			Console.WriteLine("=== BlackNight Mail Daemon 0.7 ===");
+			Console.WriteLine("=== Mail Daemon 0.7 ===");
 			Console.WriteLine("Author:\t\tSergey Drozdov");
 			Console.WriteLine("Email:\t\tsergey.drozdov.0305@gmail.com");
 			Console.WriteLine("Website:\thttps://sd.blackball.lv/sergey-drozdov");
@@ -70,7 +70,7 @@ namespace MailDaemon.ConsoleApp
 			mailAgent.SmtpPassword = configuration["MailServer:SmtpPassword"];
 			mailAgent.SmtpEnableSSL = Convert.ToBoolean(configuration["MailServer:SmtpEnableSSL"]);
 
-			if (mailDaemon.JustValidate)
+            if (mailDaemon.JustValidate)
 			{
 				Console.ForegroundColor = ConsoleColor.Yellow;
 				Console.WriteLine("--- Validation mode: do not send any mail. Just validate mail profile and recipients.");
@@ -86,7 +86,10 @@ namespace MailDaemon.ConsoleApp
 			mailDaemon.ReadMailProfile();
 			mailDaemon.ValidateMailProfile();
 
-			if (mailDaemon.MailProfile.MailBodyTemplate.StartsWith(".\\"))
+            mailDaemon.DemoRecipient.Address = configuration["DemoRecipient:address"];
+            mailDaemon.DemoRecipient.Name = configuration["DemoRecipient:name"];
+
+            if (mailDaemon.MailProfile.MailBodyTemplate.StartsWith(".\\"))
 				mailDaemon.MailProfile.MailBodyTemplate = Path.Combine(Environment.CurrentDirectory, mailDaemon.MailProfile.MailBodyTemplate.Replace(".\\", ""));
 			mailDaemon.MailProfile.MailBody = mailDaemon.ReadMailBodyTemplate(mailDaemon.MailProfile.MailBodyTemplate);
 
@@ -214,7 +217,7 @@ namespace MailDaemon.ConsoleApp
 						Console.ForegroundColor = ConsoleColor.Cyan;
 						Console.WriteLine($"--- Send demo to sender address: {mailDaemon.MailProfile.Sender.Address} ---");
 						Console.ResetColor();
-					}
+                    }
 
 					if (!mailDaemon.JustValidate)
 					{

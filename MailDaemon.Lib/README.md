@@ -1,1 +1,1 @@
-BlackNight.MailDaemon library can be used as component to send batch mails.
+MailDaemon library can be used as component to send batch mails.
