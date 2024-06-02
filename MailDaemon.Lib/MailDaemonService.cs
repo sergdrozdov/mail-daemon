@@ -12,7 +12,16 @@ namespace MailDaemon.Core
         public string MailProfileFilename { get; set; }
         public bool JustValidate { get; set; }
         public bool SendDemo { get; set; }
-        public RecipientInfo DemoRecipient { get; set; }
+
+        /// <summary>
+        /// Create processed mails on disk.
+        /// </summary>
+        public bool GeneratePreview { get; set; }
+
+        /// <summary>
+        /// The person who sends mails.
+        /// </summary>
+        public RecipientInfo Operator { get; set; }
         public int SendSleep { get; set; } = 1000;
         public List<string> Errors { get; set; }
         public List<string> Warnings { get; set; }
@@ -21,7 +30,7 @@ namespace MailDaemon.Core
         public MailDaemonService()
 		{
 			MailProfile = new MailProfile();
-            DemoRecipient = new RecipientInfo();
+            Operator = new RecipientInfo();
             Errors = new List<string>();
 			Warnings = new List<string>();
 		}
@@ -165,7 +174,7 @@ namespace MailDaemon.Core
 			if (SendDemo)
 			{
                 // send as demo to sender
-                mailMessage.To.Add(GetMailAddress(DemoRecipient.Address, DemoRecipient.Name));
+                mailMessage.To.Add(GetMailAddress(Operator.Address, Operator.Name));
                 mailMessage.From = GetMailAddress(MailProfile.Sender.Address, MailProfile.Sender.Name);
                 mailMessage.ReplyToList.Add(mailMessage.From);
                 mailMessage.Headers.Add("Reply-To", MailProfile.Sender.Address);

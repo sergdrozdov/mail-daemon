@@ -20,7 +20,10 @@ namespace MailDaemon.Core
 		[JsonProperty("template")]
 		public string MailBodyTemplate { get; set; }
 
-		public string MailBody { get; set; }
+        /// <summary>
+        /// Template content.
+        /// </summary>
+        public string MailBody { get; set; }
 
 		[JsonProperty("attachments")]
 		public List<AttachmentInfo> Attachments { get; set; }

@@ -10,6 +10,8 @@ namespace MailDaemon.ConsoleApp
 {
     internal class Program
     {
+		private static string PreviewsDirPath { get; set; }
+
         private static void Main(string[] args)
         {
 			var configuration = new ConfigurationBuilder()
@@ -35,6 +37,9 @@ namespace MailDaemon.ConsoleApp
 							case "-d":
 								mailDaemon.SendDemo = true;
 								break;
+							case "-gp":
+								mailDaemon.GeneratePreview = true;
+								break;
 							case "-h":
 								displayHelp = true;
 								break;
@@ -48,7 +53,7 @@ namespace MailDaemon.ConsoleApp
 				}
 			}
 
-			Console.WriteLine("=== Mail Daemon 0.7 ===");
+			Console.WriteLine("=== Mail Daemon 0.8 ===");
 			Console.WriteLine("Author:\t\tSergey Drozdov");
 			Console.WriteLine("Email:\t\tsergey.drozdov.0305@gmail.com");
 			Console.WriteLine("Website:\thttps://sd.blackball.lv/sergey-drozdov");
@@ -63,7 +68,30 @@ namespace MailDaemon.ConsoleApp
 				return;
 			}
 
-			// configure SMTP server info
+            if (mailDaemon.GeneratePreview)
+            {
+                try
+                {
+                    PreviewsDirPath = Path.Combine(Environment.CurrentDirectory, "previews");
+                    if (!Directory.Exists(PreviewsDirPath))
+                        Directory.CreateDirectory(PreviewsDirPath);
+                    else
+                    {
+                        foreach (var filePath in Directory.EnumerateFiles(PreviewsDirPath))
+                        {
+                            File.Delete(filePath);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    DisplayErrorMessage(ex.Message);
+                    WaitForExit();
+                    return;
+                }
+            }
+
+            // configure SMTP server info
 			mailAgent.SmtpHost = configuration["MailServer:SmtpHost"];
 			mailAgent.SmtpPort = Convert.ToInt32(configuration["MailServer:SmtpPort"]);
 			mailAgent.SmtpUsername = configuration["MailServer:SmtpUsername"];
@@ -86,8 +114,8 @@ namespace MailDaemon.ConsoleApp
 			mailDaemon.ReadMailProfile();
 			mailDaemon.ValidateMailProfile();
 
-            mailDaemon.DemoRecipient.Address = configuration["DemoRecipient:address"];
-            mailDaemon.DemoRecipient.Name = configuration["DemoRecipient:name"];
+            mailDaemon.Operator.Address = configuration["Operator:address"];
+            mailDaemon.Operator.Name = configuration["Operator:name"];
 
             if (mailDaemon.MailProfile.MailBodyTemplate.StartsWith(".\\"))
 				mailDaemon.MailProfile.MailBodyTemplate = Path.Combine(Environment.CurrentDirectory, mailDaemon.MailProfile.MailBodyTemplate.Replace(".\\", ""));
@@ -219,7 +247,23 @@ namespace MailDaemon.ConsoleApp
 						Console.ResetColor();
                     }
 
-					if (!mailDaemon.JustValidate)
+                    if (mailDaemon.GeneratePreview)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.WriteLine($"--- Create file \"{recipient.Address}.html\" with preview ---");
+                        Console.ResetColor();
+                        try
+                        {
+                            var previewFilePath = Path.Combine(PreviewsDirPath, $"{recipient.Address}.html");
+                            File.WriteAllText(previewFilePath, mailMessage.Body);
+                        }
+                        catch (Exception ex)
+                        {
+                            DisplayErrorMessage(ex.Message);
+                        }
+                    }
+
+                    if (!mailDaemon.JustValidate)
 					{
                         if (recipient.Skip.GetValueOrDefault())
                         {
@@ -274,7 +318,7 @@ namespace MailDaemon.ConsoleApp
 				try
 				{
 					var mailMessage = new MailMessage();
-					mailMessage.To.Add(mailDaemon.GetMailAddress(mailDaemon.MailProfile.Sender.Address, mailDaemon.MailProfile.Sender.Name));
+					mailMessage.To.Add(mailDaemon.GetMailAddress(mailDaemon.Operator.Address, mailDaemon.Operator.Name));
 					mailMessage.From = mailDaemon.GetMailAddress(mailDaemon.MailProfile.Sender.Address, mailDaemon.MailProfile.Sender.Name);
 					mailMessage.ReplyToList.Add(mailMessage.From);
 					mailMessage.Headers.Add("Reply-To", mailDaemon.MailProfile.Sender.Address);
