@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net.Mail;
+using MailDaemon.Lib;
 
 namespace MailDaemon.Core
 {
@@ -22,7 +23,7 @@ namespace MailDaemon.Core
         /// </summary>
         int SendSleep { get; set; }
 
-        List<string> Errors { get; set; }
+        List<MessageInfo> Errors { get; set; }
 
         List<string> Warnings { get; set; }
 

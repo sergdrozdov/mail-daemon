@@ -3,7 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Mail;
+using System.Runtime.CompilerServices;
 using System.Text;
+using MailDaemon.Lib;
+using MailDaemon.Core;
 
 namespace MailDaemon.Core
 {
@@ -23,7 +26,7 @@ namespace MailDaemon.Core
         /// </summary>
         public RecipientInfo Operator { get; set; }
         public int SendSleep { get; set; } = 1000;
-        public List<string> Errors { get; set; }
+        public List<MessageInfo> Errors { get; set; }
         public List<string> Warnings { get; set; }
         public MailProfile MailProfile { get; set; }
 
@@ -31,7 +34,7 @@ namespace MailDaemon.Core
 		{
 			MailProfile = new MailProfile();
             Operator = new RecipientInfo();
-            Errors = new List<string>();
+            Errors = new List<MessageInfo>();
 			Warnings = new List<string>();
 		}
 
@@ -72,30 +75,60 @@ namespace MailDaemon.Core
 			// validate sender
 			if (MailProfile.Sender == null)
 			{
-				Errors.Add($"Mail 'sender' property in '{MailProfileFilename}' not exists.");
+				Errors.Add(new MessageInfo
+                    {
+                        Message = $"Mail \"sender\" property in \"{MailProfileFilename}\" not exists.",
+					    IsCritical = true
+                    }
+                );
 			}
 			else if (string.IsNullOrEmpty(MailProfile.Sender.Address))
 			{
-				Errors.Add($"Mail 'sender' address value in '{MailProfileFilename}' is empty.");
+				Errors.Add(new MessageInfo
+                    {
+						Message = $"Mail \"sender\" address value in \"{MailProfileFilename}\" is empty.",
+                        IsCritical = true
+                    }
+                );
 			}
 			else if (!MailProfile.Sender.Address.ValidateEmail())
 			{
-				Errors.Add($"Mail 'sender' address '{MailProfile.Sender.Address}' not valid.");
+				Errors.Add(new MessageInfo
+                    {
+                        Message = $"Mail \"sender\" address \"{MailProfile.Sender.Address}\" not valid.",
+                        IsCritical = true
+                    }
+                );
 			}
 
 			if (string.IsNullOrEmpty(MailProfile.Subject))
 			{
-				Errors.Add($"Mail 'subject' value in '{MailProfileFilename}' is empty.");
+				Errors.Add(new MessageInfo
+                    {
+                        Message = $"Mail \"subject\" value in \"{MailProfileFilename}\" is empty.",
+                        IsCritical = true
+                    }
+                );
 			}
 
 			// validate recipients
 			if (MailProfile.Recipients == null)
 			{
-				Errors.Add($"Mail 'recipients' property in '{MailProfileFilename}' not exists.");
+				Errors.Add(new MessageInfo
+                    {
+                        Message = $"Mail \"recipients\" property in \"{MailProfileFilename}\" not exists.",
+                        IsCritical = true
+                    }
+                );
 			}
 			else if (MailProfile.Recipients.Count == 0)
 			{
-				Errors.Add("No mail recipients found.");
+				Errors.Add(new MessageInfo
+                    {
+                        Message = "No mail recipients found.",
+                        IsCritical = true
+                    }
+                );
 			}
 			else
 			{
@@ -103,7 +136,12 @@ namespace MailDaemon.Core
 				{
 					if (!recipient.Address.ValidateEmail())
 					{
-						Errors.Add($"Mail 'recipient' address '{recipient.Address}' not valid.");
+						Errors.Add(new MessageInfo
+                            {
+                                Message = $"Mail \"recipient\" address \"{recipient.Address}\" not valid.",
+                                IsCritical = true
+                            }
+                        );
 					}
 
 					if (recipient.Attachments != null)
@@ -112,13 +150,13 @@ namespace MailDaemon.Core
 						{
 							if (string.IsNullOrEmpty(attachment.Path))
 							{
-								Warnings.Add($"Attachment file path for recipient '{recipient.Address}' is empty.");
+								Warnings.Add($"Attachment file path for recipient \"{recipient.Address}\" is empty.");
 								continue;
 							}
 
 							if (!File.Exists(attachment.Path))
 							{
-								Warnings.Add($"Attachment '{attachment.Path}' for recipient '{recipient.Address}' not found.");
+								Warnings.Add($"Attachment \"{attachment.Path}\" for recipient \"{recipient.Address}\" not found.");
 							}
 						}
 					}
@@ -128,13 +166,23 @@ namespace MailDaemon.Core
 			// validate mail template
 			if (string.IsNullOrEmpty(MailProfile.MailBodyTemplate))
 			{
-				Errors.Add($"Mail 'template' property in '{MailProfileFilename}' is empty.");
+				Errors.Add(new MessageInfo
+                    {
+                        Message = $"Mail \"template\" property in \"{MailProfileFilename}\" is empty.",
+                        IsCritical = true
+                    }
+                );
 			}
 			else
 			{
 				if (!File.Exists(MailProfile.MailBodyTemplate))
 				{
-					Errors.Add($"Mail body template file '{MailProfile.MailBodyTemplate}' not found.");
+					Errors.Add(new MessageInfo
+                        {
+                            Message = $"Mail body template file \"{MailProfile.MailBodyTemplate}\" not exists.",
+                            IsCritical = true
+                        }
+                    );
 				}
 			}
 
@@ -145,13 +193,18 @@ namespace MailDaemon.Core
 				{
 					if (string.IsNullOrEmpty(attachment.Path))
 					{
-						Warnings.Add($"Attachment file path for mail profile '{MailProfileFilename}' is empty.");
+						Warnings.Add($"Attachment file path for mail profile \"{MailProfileFilename}\" is empty.");
 						continue;
 					}
 
 					if (!File.Exists(attachment.Path))
 					{
-						Errors.Add($"Attachment '{attachment.Path}' for mail profile '{MailProfileFilename}' not found.");
+						Errors.Add(new MessageInfo
+                            {
+                                Message = $"Attachment \"{attachment.Path}\" for mail profile \"{MailProfileFilename}\" not exists.",
+                                IsCritical = true
+                            }
+                        );
 					}
 				}
 			}

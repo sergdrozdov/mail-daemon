@@ -26,26 +26,32 @@ namespace MailDaemon.ConsoleApp
             if (args.Length > 0)
 			{
 				try
-				{
-					for (var i = 0; i < args.Length; i++)
-					{
-						switch (args[i].ToLower())
-						{
-							case "-v":
-								mailDaemon.JustValidate = true;
-								break;
-							case "-d":
-								mailDaemon.SendDemo = true;
-								break;
-							case "-gp":
-								mailDaemon.GeneratePreview = true;
-								break;
-							case "-h":
-								displayHelp = true;
-								break;
-						}
-					}
-				}
+                {
+                    var argIndex = 0;
+                    foreach (var arg in args)
+                    {
+                        switch (arg.ToLower())
+                        {
+                            case "-v":
+                                mailDaemon.JustValidate = true;
+                                break;
+                            case "-d":
+                                mailDaemon.SendDemo = true;
+                                break;
+                            case "-gp":
+                                mailDaemon.GeneratePreview = true;
+                                break;
+                            case "-p":
+                                mailDaemon.MailProfileFilename = Path.Combine(Environment.CurrentDirectory, "MailProfiles", args[argIndex + 1]);
+                                break;
+                            case "-h":
+                                displayHelp = true;
+                                break;
+                        }
+
+                        argIndex++;
+                    }
+                }
 				catch (Exception ex)
 				{
 					DisplayErrorMessage(ex.Message);
@@ -53,17 +59,26 @@ namespace MailDaemon.ConsoleApp
 				}
 			}
 
-			Console.WriteLine("=== Mail Daemon 0.8 ===");
-			Console.WriteLine("Author:\t\tSergey Drozdov");
-			Console.WriteLine("Email:\t\tsergey.drozdov.0305@gmail.com");
-			Console.WriteLine("Website:\thttps://sd.blackball.lv/sergey-drozdov");
-			Console.Write(Environment.NewLine);
+            if (!string.IsNullOrEmpty(mailDaemon.MailProfileFilename) && !File.Exists(mailDaemon.MailProfileFilename))
+            {
+                DisplayErrorMessage($"Mail profile \"{mailDaemon.MailProfileFilename}\" not exists.");
+                return;
+            }
+
+            // TBD: Think about whether someone needs this information
+            //Console.WriteLine("=== Mail Daemon 0.8 ===");
+            //Console.WriteLine("Author:\t\tSergey Drozdov");
+            //Console.WriteLine("Email:\t\tsergey.drozdov.0305@gmail.com");
+            //Console.WriteLine("Website:\thttps://sd.blackball.lv/sergey-drozdov");
+            //Console.Write(Environment.NewLine);
 
 			if (displayHelp)
 			{
 				Console.WriteLine("Description:");
 				Console.WriteLine("-v\t\tValidation mode to verify mail profile integrity. With this argument mails not sending to recipients.");
 				Console.WriteLine("-d\t\tSend demo mail only to sender. With this argument mails not sending to recipients.");
+				Console.WriteLine("-gp\t\tCreate files on disk with generated mails for each recipient.");
+				Console.WriteLine("-p\t\tName of the mail profile.");
 				WaitForExit();
 				return;
 			}
@@ -106,9 +121,10 @@ namespace MailDaemon.ConsoleApp
 				Console.ResetColor();
 			}
 
-			mailDaemon.MailProfileFilename = Path.Combine(Environment.CurrentDirectory, "MailProfiles", configuration["App:MailProfile"]);
+			if (string.IsNullOrEmpty(mailDaemon.MailProfileFilename))
+			    mailDaemon.MailProfileFilename = Path.Combine(Environment.CurrentDirectory, "MailProfiles", configuration["App:MailProfile"]);
 			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.WriteLine($"--- Mail profile: '{mailDaemon.MailProfileFilename}'");
+			Console.WriteLine($"--- Mail profile: \"{mailDaemon.MailProfileFilename}\"");
 			Console.ResetColor();
 			
 			mailDaemon.ReadMailProfile();
@@ -129,7 +145,7 @@ namespace MailDaemon.ConsoleApp
 				Console.WriteLine("Errors:");
 				foreach (var message in mailDaemon.Errors)
 				{
-					DisplayErrorMessage(message);
+					DisplayErrorMessage(message.Message);
 				}
 			}
 
@@ -205,13 +221,13 @@ namespace MailDaemon.ConsoleApp
 						{
 							if (File.Exists(attachment.Path))
 							{
-								Console.WriteLine($"\tAttachment: '{attachment.Path}'");
-								recipientReportInfo.AppendLine($"<div style=\"padding-left: 40px\">Attachment: '{attachment.Path}'</div>");
+								Console.WriteLine($"\tAttachment: \"{attachment.Path}\"");
+								recipientReportInfo.AppendLine($"<div style=\"padding-left: 40px\">Attachment: \"{attachment.Path}\"</div>");
 							}
 							else
 							{
-								DisplayWarningMessage($"\tAttachment: file '{attachment.Path}' not exists.");
-								recipientReportInfo.AppendLine($"<div style=\"padding-left: 40px\">Attachment: file '{attachment.Path}' not exists.</div>");
+								DisplayWarningMessage($"\tAttachment: file \"{attachment.Path}\" not exists.");
+								recipientReportInfo.AppendLine($"<div style=\"padding-left: 40px\">Attachment: file \"{attachment.Path}\" not exists.</div>");
 							}
 						}
 					}
@@ -223,13 +239,13 @@ namespace MailDaemon.ConsoleApp
 						{
 							if (File.Exists(attachment.Path))
 							{
-								Console.WriteLine($"\tAttachment: '{attachment.Path}'");
-								recipientReportInfo.AppendLine($"<div style=\"padding-left: 40px\">Attachment: '{attachment.Path}'</div>");
+								Console.WriteLine($"\tAttachment: \"{attachment.Path}\"");
+								recipientReportInfo.AppendLine($"<div style=\"padding-left: 40px\">Attachment: \"{attachment.Path}\"</div>");
 							}
 							else
 							{
 								DisplayWarningMessage($"\tAttachment: file \"{attachment.Path}\" not exists.");
-								recipientReportInfo.AppendLine($"<div style=\"padding-left: 40px; color: #aa0000\">Attachment: file '{attachment.Path}' not exists.</div>");
+								recipientReportInfo.AppendLine($"<div style=\"padding-left: 40px; color: #aa0000\">Attachment: file \"{attachment.Path}\" not exists.</div>");
 							}
 						}
 					}
@@ -336,8 +352,8 @@ namespace MailDaemon.ConsoleApp
 					report.AppendLine("</head>");
 					report.AppendLine("<body>");
 					report.AppendLine($"<div>{mailDaemon.MailProfile.Recipients.Count} mails has been sent.</div>");
-					report.AppendLine($"<div>Mail profile: '{mailDaemon.MailProfileFilename}'</div>");
-					report.AppendLine($"<div>Mail template: '{mailDaemon.MailProfile.MailBodyTemplate}'</div>");
+					report.AppendLine($"<div>Mail profile: \"{mailDaemon.MailProfileFilename}\"</div>");
+					report.AppendLine($"<div>Mail template: \"{mailDaemon.MailProfile.MailBodyTemplate}\"</div>");
 					report.AppendLine("<br/>");
 					report.AppendLine($"<div><strong>Recipients:</strong></div>");
 					report.AppendLine($"<div>{recipientsReport}</div>");

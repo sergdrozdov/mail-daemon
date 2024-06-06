@@ -5,8 +5,10 @@ Batch mail sending utility with configurable settings.
 
 Arguments
 -------------------------------------------------
--v      - validation mode.  
--d      - send demo mail to sender.  
+-v      - validation mode.
+-d      - send demo mail to sender.
+-p      - profile file name. E.g.: -p subscribers.json
+-gp     - create files on disk with generated mails for each recipient.
 -h      - help information.
 
 
@@ -65,3 +67,6 @@ mail-daemon.exe -v
 
 Run Mail Daemon with attributes -v -d to validate JSON mail profile: no any recipient mail sending, just validation and sending demo mail to sender address.
 mail-daemon.exe -v -d
+
+Run Mail Daemon with creation of generated mail files.
+mail-daemon.exe -gp
