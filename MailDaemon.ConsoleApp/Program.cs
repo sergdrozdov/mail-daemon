@@ -194,7 +194,12 @@ namespace MailDaemon.ConsoleApp
 				var recipientReportInfo = new StringBuilder();
 				try
 				{
-					var mailMessage = mailDaemon.GenerateMailMessage(recipient);
+					if (!string.IsNullOrEmpty(recipient.MailBodyTemplate))
+                        mailDaemon.MailProfile.MailBody = mailDaemon.ReadMailBodyTemplate(recipient.MailBodyTemplate);
+					else
+                        mailDaemon.MailProfile.MailBody = mailDaemon.ReadMailBodyTemplate(mailDaemon.MailProfile.MailBodyTemplate);
+
+                    var mailMessage = mailDaemon.GenerateMailMessage(recipient);
 
 					// display mail sending process
                     counter++;
@@ -204,10 +209,6 @@ namespace MailDaemon.ConsoleApp
 					Console.WriteLine($"Subject: {mailMessage.Subject}");
 					Console.WriteLine($"Template: {(!string.IsNullOrEmpty(recipient.MailBodyTemplate) ? recipient.MailBodyTemplate : mailDaemon.MailProfile.MailBodyTemplate)}");
 
-					if (!string.IsNullOrEmpty(recipient.MailBodyTemplate))
-                        mailDaemon.MailProfile.MailBody = mailDaemon.ReadMailBodyTemplate(recipient.MailBodyTemplate);
-					else
-                        mailDaemon.MailProfile.MailBody = mailDaemon.ReadMailBodyTemplate(mailDaemon.MailProfile.MailBodyTemplate);
 
                     if (recipient.Skip.GetValueOrDefault())
                         recipientReportInfo.AppendLine("<div style=\"color: #999\">");
