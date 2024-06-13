@@ -164,7 +164,7 @@ namespace MailDaemon.Core
 			}
 
 			// validate mail template
-			if (string.IsNullOrEmpty(MailProfile.MailBodyTemplate))
+			if (string.IsNullOrEmpty(MailProfile.MailBodyTemplateFilePath))
 			{
 				Errors.Add(new MessageInfo
                     {
@@ -175,11 +175,11 @@ namespace MailDaemon.Core
 			}
 			else
 			{
-				if (!File.Exists(MailProfile.MailBodyTemplate))
+				if (!File.Exists(MailProfile.MailBodyTemplateFilePath))
 				{
 					Errors.Add(new MessageInfo
                         {
-                            Message = $"Mail body template file \"{MailProfile.MailBodyTemplate}\" not exists.",
+                            Message = $"Mail body template file \"{MailProfile.MailBodyTemplateFilePath}\" not exists.",
                             IsCritical = true
                         }
                     );
@@ -246,7 +246,9 @@ namespace MailDaemon.Core
 			if (SendDemo)
 				mailMessage.Subject += " [DEMO MAIL]";
 
-			mailMessage.IsBodyHtml = true;
+			if (Path.GetExtension(recipientInfo.MailBodyTemplateFilePath).ToLower() != ".txt")
+			    mailMessage.IsBodyHtml = true;
+
 			mailMessage.BodyEncoding = Encoding.UTF8;
 			mailMessage.Body = FormatMessageBody(recipientInfo);
 

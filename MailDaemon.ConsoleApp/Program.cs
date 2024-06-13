@@ -138,9 +138,9 @@ namespace MailDaemon.ConsoleApp
             mailDaemonService.Operator.Address = configuration["Operator:address"];
             mailDaemonService.Operator.Name = configuration["Operator:name"];
 
-            if (mailDaemonService.MailProfile.MailBodyTemplate.StartsWith(".\\"))
-				mailDaemonService.MailProfile.MailBodyTemplate = Path.Combine(Environment.CurrentDirectory, mailDaemonService.MailProfile.MailBodyTemplate.Replace(".\\", ""));
-			mailDaemonService.MailProfile.MailBody = mailDaemonService.ReadMailBodyTemplate(mailDaemonService.MailProfile.MailBodyTemplate);
+            if (mailDaemonService.MailProfile.MailBodyTemplateFilePath.StartsWith(".\\"))
+				mailDaemonService.MailProfile.MailBodyTemplateFilePath = Path.Combine(Environment.CurrentDirectory, mailDaemonService.MailProfile.MailBodyTemplateFilePath.Replace(".\\", ""));
+			mailDaemonService.MailProfile.MailBody = mailDaemonService.ReadMailBodyTemplate(mailDaemonService.MailProfile.MailBodyTemplateFilePath);
 
 			// show errors
 			if (mailDaemonService.Errors.Count > 0)
@@ -198,11 +198,12 @@ namespace MailDaemon.ConsoleApp
 			{
 				var recipientReportInfo = new StringBuilder();
 				try
-				{
-					if (!string.IsNullOrEmpty(recipient.MailBodyTemplate))
-                        mailDaemonService.MailProfile.MailBody = mailDaemonService.ReadMailBodyTemplate(recipient.MailBodyTemplate);
-					else
-                        mailDaemonService.MailProfile.MailBody = mailDaemonService.ReadMailBodyTemplate(mailDaemonService.MailProfile.MailBodyTemplate);
+	        	{
+                    // TBD: add support for HTML and plain text files
+					if (string.IsNullOrEmpty(recipient.MailBodyTemplateFilePath))
+                        recipient.MailBodyTemplateFilePath = mailDaemonService.MailProfile.MailBodyTemplateFilePath;
+
+                    mailDaemonService.MailProfile.MailBody = mailDaemonService.ReadMailBodyTemplate(recipient.MailBodyTemplateFilePath);
 
                     var mailMessage = mailDaemonService.GenerateMailMessage(recipient);
 
@@ -212,14 +213,14 @@ namespace MailDaemon.ConsoleApp
                     Console.WriteLine($"({counter}) {recipient.Company?.ToUpper()} {recipient.Name}");
                     Console.WriteLine($"Mail: {recipient.Address}");
 					Console.WriteLine($"Subject: {mailMessage.Subject}");
-					Console.WriteLine($"Template: {(!string.IsNullOrEmpty(recipient.MailBodyTemplate) ? recipient.MailBodyTemplate : mailDaemonService.MailProfile.MailBodyTemplate)}");
+					Console.WriteLine($"Template: {(!string.IsNullOrEmpty(recipient.MailBodyTemplateFilePath) ? recipient.MailBodyTemplateFilePath : mailDaemonService.MailProfile.MailBodyTemplateFilePath)}");
 
                     if (recipient.Skip.GetValueOrDefault())
                         recipientReportInfo.AppendLine("<div style=\"color: #999\">");
                     recipientReportInfo.AppendLine($"({counter}) {recipient.Company?.ToUpper()} {recipient.Name} <a href=\"mailto:{recipient.Address}\">{recipient.Address}</a>");
 					recipientReportInfo.AppendLine($"<div>Subject: {mailMessage.Subject}</div>");
-					if (!string.IsNullOrEmpty(recipient.MailBodyTemplate) && recipient.MailBodyTemplate != mailDaemonService.MailProfile.MailBodyTemplate)
-    					recipientReportInfo.AppendLine($"<div>Template: {recipient.MailBodyTemplate}</div>");
+					if (!string.IsNullOrEmpty(recipient.MailBodyTemplateFilePath) && recipient.MailBodyTemplateFilePath != mailDaemonService.MailProfile.MailBodyTemplateFilePath)
+    					recipientReportInfo.AppendLine($"<div>Template: {recipient.MailBodyTemplateFilePath}</div>");
 
                     // attachments
 					if (mailDaemonService.MailProfile.Attachments != null)
@@ -277,7 +278,7 @@ namespace MailDaemon.ConsoleApp
                         Console.ResetColor();
                         try
                         {
-                            var previewFilePath = Path.Combine(PreviewsDirPath, $"{recipient.Address}.html");
+                            var previewFilePath = Path.Combine(PreviewsDirPath, $"{recipient.Address}{Path.GetExtension(recipient.MailBodyTemplateFilePath)}");
                             File.WriteAllText(previewFilePath, mailMessage.Body);
                         }
                         catch (Exception ex)
@@ -398,7 +399,7 @@ namespace MailDaemon.ConsoleApp
             report.AppendLine("<body>");
             report.AppendLine($"<div>{mailDaemonService.MailProfile.Recipients.Count} mails has been sent.</div>");
             report.AppendLine($"<div>Mail profile: \"{mailDaemonService.MailProfileFilename}\"</div>");
-            report.AppendLine($"<div>Mail template: \"{mailDaemonService.MailProfile.MailBodyTemplate}\"</div>");
+            report.AppendLine($"<div>Mail template: \"{mailDaemonService.MailProfile.MailBodyTemplateFilePath}\"</div>");
             report.AppendLine("<br/>");
             report.AppendLine($"<div><strong>Recipients:</strong></div>");
             report.AppendLine($"<div>{recipientsReport}</div>");

@@ -21,7 +21,7 @@ namespace MailDaemon.Core
 		/// Path to mail template file.
 		/// </summary>
 		[JsonProperty("template")]
-		public string MailBodyTemplate { get; set; }
+		public string MailBodyTemplateFilePath { get; set; }
 
 		public string MailBody { get; set; }
 
