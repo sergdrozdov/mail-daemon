@@ -31,10 +31,16 @@ namespace MailDaemon.Core
         [JsonProperty("contact_person")]
         public string ContactPerson { get; set; }
 
+        /// <summary>
+        /// List of data to replace text in the mail body template.
+        /// </summary>
+        [JsonProperty("replace")]
+        public Dictionary<string,string> Replace { get; set; }
+
         [JsonProperty("language")]
 		public string Language { get; set; }
 
-		[JsonProperty("attachments")]
+        [JsonProperty("attachments")]
 		public List<AttachmentInfo> Attachments { get; set; }
 
         /// <summary>

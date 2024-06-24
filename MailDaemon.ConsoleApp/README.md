@@ -5,11 +5,14 @@ Batch mail sending utility with configurable settings.
 
 Arguments
 -------------------------------------------------
--v      - validation mode.
--d      - send demo mail to sender.
--p      - profile file name. E.g.: -p subscribers.json
--gp     - create files on disk with generated mails for each recipient.
--h      - help information.
+A console application can be launched with various arguments.
+| Argument  | Description
+| --------- | ------------
+| -v        | validation mode.
+| -d        | send demo mail to sender.
+| -p        | profile file name. E.g.: -p subscribers.json
+| -gp       | create files on disk with generated mails for each recipient.
+| -h        | help information.
 
 
 Folders
@@ -20,6 +23,12 @@ MailTemplates – folder to store mail templates.
 
 Mail profile
 -------------------------------------------------
+| Value         | Description
+| ------------- | ------------
+| **sender**    | **address** is required value.
+| **subject**   | is required value.
+| **template**  | is required value
+| **recipients**| **address** is required value.
 ```
 mailProfile_Default.json
 {
@@ -42,7 +51,11 @@ mailProfile_Default.json
             "name": "<name>",
             "subject": "<subject override parent>",
             "company": "<company>"
-            "template": "<path to mail template override parent>"
+            "template": "<path to mail template override parent>",
+			"replace": {
+				"custom-text": "<replace with>",
+                "url": "<replace with>"
+			},
             "attachments": [
                 {
                     "path": "<path to file>",
@@ -50,8 +63,12 @@ mailProfile_Default.json
                 }
             ],
         }
-    ]
-}
+    ],
+    "replace":
+    {
+        "text1": "replace text",
+        "text2": "replace text"
+    }}
 ```
 
 Text placeholders
@@ -60,13 +77,16 @@ Text placeholders
 \{COMPANY_NAME\} – recipient company name.
 
 
-Validation mode
+Validation and demo mode
 -------------------------------------------------
-Run Mail Daemon with attribute -v to validate JSON mail profile: no any mail sending, just validation.
-mail-daemon.exe -v
+Run Mail Daemon with attribute -v to validate JSON mail profile: no any mail sending, just validation.\
+mail-daemon **-v**
 
-Run Mail Daemon with attributes -v -d to validate JSON mail profile: no any recipient mail sending, just validation and sending demo mail to sender address.
-mail-daemon.exe -v -d
+Run Mail Daemon with attributes -v -d to validate JSON mail profile: no any recipient mail sending, just validation and sending demo mail to sender address.\
+mail-daemon **-v -d**
 
-Run Mail Daemon with creation of generated mail files.
-mail-daemon.exe -gp
+Run Mail Daemon with creation of generated mail files.\
+mail-daemon **-gp**
+
+Run Mail Daemon with custom mail profile.\
+mail-daemon **-p custom-profile.json**

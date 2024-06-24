@@ -304,6 +304,14 @@ namespace MailDaemon.Core
 				.Replace("{COMPANY_NAME}", recipientInfo.Company)
                 .Replace("{CONTACT_PERSON}", recipientInfo.ContactPerson);
 
+            if (recipientInfo.Replace == null)
+                return body;
+
+            foreach (var replaceData in recipientInfo.Replace)
+            {
+                body = body.Replace("{" + replaceData.Key + "}", replaceData.Value, StringComparison.InvariantCultureIgnoreCase);
+            }
+
             return body;
 		}
 	}
