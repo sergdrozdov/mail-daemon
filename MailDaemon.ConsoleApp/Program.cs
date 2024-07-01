@@ -84,33 +84,6 @@ namespace MailDaemon.ConsoleApp
 				return;
 			}
 
-            ReportsDirPath = Path.Combine(Environment.CurrentDirectory, "reports");
-            if (!Directory.Exists(ReportsDirPath))
-                Directory.CreateDirectory(ReportsDirPath);
-
-            if (mailDaemonService.GeneratePreview)
-            {
-                try
-                {
-                    PreviewsDirPath = Path.Combine(Environment.CurrentDirectory, "previews");
-                    if (!Directory.Exists(PreviewsDirPath))
-                        Directory.CreateDirectory(PreviewsDirPath);
-                    else
-                    {
-                        foreach (var filePath in Directory.EnumerateFiles(PreviewsDirPath))
-                        {
-                            File.Delete(filePath);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    DisplayErrorMessage(ex.Message);
-                    WaitForExit();
-                    return;
-                }
-            }
-
             // configure SMTP server info
 			mailAgent.SmtpHost = configuration["MailServer:SmtpHost"];
 			mailAgent.SmtpPort = Convert.ToInt32(configuration["MailServer:SmtpPort"]);
@@ -129,10 +102,37 @@ namespace MailDaemon.ConsoleApp
 			if (string.IsNullOrEmpty(mailDaemonService.MailProfileFilename))
 			    mailDaemonService.MailProfileFilename = Path.Combine(Environment.CurrentDirectory, "MailProfiles", configuration["App:MailProfile"]);
 			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.WriteLine($"--- Mail profile: \"{mailDaemonService.MailProfileFilename}\"");
+			Console.WriteLine($"--- Mail profile: \"{Path.GetFileName(mailDaemonService.MailProfileFilename)}\"");
 			Console.ResetColor();
-			
-			mailDaemonService.ReadMailProfile();
+
+            ReportsDirPath = Path.Combine(Environment.CurrentDirectory, "reports");
+            if (!Directory.Exists(ReportsDirPath))
+                Directory.CreateDirectory(ReportsDirPath);
+
+            if (mailDaemonService.GeneratePreview)
+            {
+                try
+                {
+                    PreviewsDirPath = Path.Combine(Environment.CurrentDirectory, "previews", Path.GetFileName(mailDaemonService.MailProfileFilename));
+                    if (!Directory.Exists(PreviewsDirPath))
+                        Directory.CreateDirectory(PreviewsDirPath);
+                    else
+                    {
+                        foreach (var filePath in Directory.EnumerateFiles(PreviewsDirPath))
+                        {
+                            File.Delete(filePath);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    DisplayErrorMessage(ex.Message);
+                    WaitForExit();
+                    return;
+                }
+            }
+
+            mailDaemonService.ReadMailProfile();
 			mailDaemonService.ValidateMailProfile();
 
             mailDaemonService.Operator.Address = configuration["Operator:address"];
@@ -339,7 +339,7 @@ namespace MailDaemon.ConsoleApp
             var report = GenerateReport(mailDaemonService, recipientsReport);
             try
             {
-                var reportFilePath = Path.Combine(ReportsDirPath, $"report.html");
+                var reportFilePath = Path.Combine(ReportsDirPath, $"report_{Path.GetFileName(mailDaemonService.MailProfileFilename)}.html");
                 File.WriteAllText(reportFilePath, report);
             }
             catch (Exception ex)
