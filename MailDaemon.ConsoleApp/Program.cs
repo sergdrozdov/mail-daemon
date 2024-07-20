@@ -105,6 +105,17 @@ namespace MailDaemon.ConsoleApp
 			Console.WriteLine($"--- Mail profile: \"{Path.GetFileName(mailDaemonService.MailProfileFilename)}\"");
 			Console.ResetColor();
 
+            try
+            {
+                mailDaemonService.ReadMailProfile();
+            }
+            catch (Exception ex)
+            {
+                mailDaemonService.AddError(ex.Message);
+            }
+
+            mailDaemonService.ValidateMailProfile();
+
             ReportsDirPath = Path.Combine(Environment.CurrentDirectory, "reports");
             if (!Directory.Exists(ReportsDirPath))
                 Directory.CreateDirectory(ReportsDirPath);
@@ -131,9 +142,6 @@ namespace MailDaemon.ConsoleApp
                     return;
                 }
             }
-
-            mailDaemonService.ReadMailProfile();
-			mailDaemonService.ValidateMailProfile();
 
             mailDaemonService.Operator.Address = configuration["Operator:address"];
             mailDaemonService.Operator.Name = configuration["Operator:name"];
@@ -185,9 +193,14 @@ namespace MailDaemon.ConsoleApp
 				{
 					key = Console.ReadLine().ToLower();
 
-					if (key is "y" or "n")
+					if (key == "y")
 					{
 						confirmed = true;
+					}
+					if (key == "n")
+					{
+                        WaitForExit();
+						return;
 					}
 				}
 			}			

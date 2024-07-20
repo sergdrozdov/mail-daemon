@@ -210,7 +210,16 @@ namespace MailDaemon.Core
 			}
 		}
 
-		public MailAddress GetMailAddress(string address, string name = "")
+        public void AddError(string errorMessage, bool isCritical = false)
+        {
+			Errors.Add(new MessageInfo()
+            {
+				IsCritical = isCritical,
+				Message = errorMessage
+            });
+        }
+
+        public MailAddress GetMailAddress(string address, string name = "")
 		{
 			if (string.IsNullOrEmpty(address) && string.IsNullOrEmpty(name))
 				throw new ArgumentException("Address and name both empty.");
@@ -304,12 +313,21 @@ namespace MailDaemon.Core
 				.Replace("{COMPANY_NAME}", recipientInfo.Company)
                 .Replace("{CONTACT_PERSON}", recipientInfo.ContactPerson);
 
-            if (recipientInfo.Replace == null)
-                return body;
-
-            foreach (var replaceData in recipientInfo.Replace)
+            // recipient's replacement dictionary has higher priority
+            if (recipientInfo.Replace != null)
             {
-                body = body.Replace("{" + replaceData.Key + "}", replaceData.Value, StringComparison.InvariantCultureIgnoreCase);
+                foreach (var replaceData in recipientInfo.Replace)
+                {
+                    body = body.Replace("{" + replaceData.Key + "}", replaceData.Value, StringComparison.InvariantCultureIgnoreCase);
+                }
+            }
+
+            if (MailProfile.Replace != null)
+            {
+                foreach (var replaceData in MailProfile.Replace)
+                {
+                    body = body.Replace("{" + replaceData.Key + "}", replaceData.Value, StringComparison.InvariantCultureIgnoreCase);
+                }
             }
 
             return body;

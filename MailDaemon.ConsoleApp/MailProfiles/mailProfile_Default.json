@@ -1,20 +1,23 @@
 {
-	"sender":
-		{
-			"address": "<sender_address>",
-			"name": "Sender Name"
-		},
-	  "subject": "Mail subject",
-	  "template": ".\\MailTemplates\\MailBody_Default.html",
-	  "attachments": [
-		{
-			"path": "<path_to_attachment>"
-		}
-	],
+  "sender": {
+    "address": "sender_address@aa.lc",
+    "name": "Sender Name"
+  },
+  "subject": "Mail subject",
+  "template": ".\\MailTemplates\\MailBody_Default.html",
 	"recipients": [
 		{
-			"address": "<recipient_address>",
-			"name": "Recipient Name"
+			"address": "recipient_address@ss.lv",
+			"name": "Recipient Name",
+      "subject": "Custom subject",
+			"replace": {
+				"rec_text1": "<rec replace text>",
+				"rec_text2": "<rec replace text>"
+			}
 		}
-	]
+	],
+	"replace": {
+		"text1": "<replace text>",
+		"text2": "<replace text>"
+	}
 }

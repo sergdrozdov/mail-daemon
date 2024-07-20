@@ -14,11 +14,11 @@ namespace MailDaemon.Core
 		[JsonProperty("subject")]
 		public string Subject { get; set; }
 
-		/// <summary>
-		/// Path to mail template file.
-		/// </summary>
-		[JsonProperty("template")]
-		public string MailBodyTemplateFilePath { get; set; }
+        /// <summary>
+        /// Path to mail template file.
+        /// </summary>
+        [JsonProperty("template")]
+        public string MailBodyTemplateFilePath { get; set; } = "";
 
         /// <summary>
         /// Template content.
@@ -27,5 +27,11 @@ namespace MailDaemon.Core
 
 		[JsonProperty("attachments")]
 		public List<AttachmentInfo> Attachments { get; set; }
+
+        /// <summary>
+        /// List of data to replace text in the mail body template.
+        /// </summary>
+        [JsonProperty("replace")]
+        public Dictionary<string, string> Replace { get; set; }
 	}
 }

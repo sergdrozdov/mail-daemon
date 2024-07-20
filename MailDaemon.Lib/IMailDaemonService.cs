@@ -31,6 +31,7 @@ namespace MailDaemon.Core
 
         void ReadMailProfile();
         void ValidateMailProfile();
+        void AddError(string errorMessage, bool isCritical);
         string ReadMailBodyTemplate(string filePath);      
         MailAddress GetMailAddress(string address, string name = "");
         MailMessage GenerateMailMessage(RecipientInfo recipientInfo);
