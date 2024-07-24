@@ -1,10 +1,9 @@
 ﻿using System.IO;
 using System.Net.Mime;
-using System.Text.RegularExpressions;
 
 namespace MailDaemon.Core
 {
-    public class Helpers
+    public class Helper
     {
         public static string GetMediaType(string fileName)
         {

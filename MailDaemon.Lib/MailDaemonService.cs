@@ -144,7 +144,7 @@ namespace MailDaemon.Core
                         );
 					}
 
-					if (recipient.Attachments != null)
+                    if (!recipient.Skip.GetValueOrDefault() && recipient.Attachments != null)
 					{
 						foreach (var attachment in recipient.Attachments)
 						{
@@ -161,7 +161,7 @@ namespace MailDaemon.Core
 						}
 					}
 				}
-			}
+            }
 
 			// validate mail template
 			if (string.IsNullOrEmpty(MailProfile.MailBodyTemplateFilePath))
@@ -261,8 +261,24 @@ namespace MailDaemon.Core
 			mailMessage.BodyEncoding = Encoding.UTF8;
 			mailMessage.Body = FormatMessageBody(recipientInfo);
 
+            // recipient related attachments use at first
+            if (recipientInfo.Attachments != null)
+            {
+                foreach (var attachment in recipientInfo.Attachments)
+                {
+                    if (File.Exists(attachment.Path))
+                    {
+                        var fileStream = new StreamReader(attachment.Path);
+                        if (!string.IsNullOrEmpty(attachment.FileName))
+                            mailMessage.Attachments.Add(new Attachment(fileStream.BaseStream, attachment.FileName, Helper.GetMediaType(attachment.Path)));
+                        else
+                            mailMessage.Attachments.Add(new Attachment(fileStream.BaseStream, Path.GetFileName(attachment.Path), Helper.GetMediaType(attachment.Path)));
+                    }
+                }
+            }
+
 			// mail profile attachments
-			if (MailProfile.Attachments != null)
+            if (MailProfile.Attachments != null)
 			{
 				foreach (var attachment in MailProfile.Attachments)
 				{
@@ -270,25 +286,9 @@ namespace MailDaemon.Core
 						continue;
 					var fileStream = new StreamReader(attachment.Path);
 					if (!string.IsNullOrEmpty(attachment.FileName))
-						mailMessage.Attachments.Add(new Attachment(fileStream.BaseStream, attachment.FileName, Helpers.GetMediaType(attachment.Path)));
+						mailMessage.Attachments.Add(new Attachment(fileStream.BaseStream, attachment.FileName, Helper.GetMediaType(attachment.Path)));
 					else
-						mailMessage.Attachments.Add(new Attachment(fileStream.BaseStream, Path.GetFileName(attachment.Path), Helpers.GetMediaType(attachment.Path)));
-				}
-			}
-
-			// recipient related attachments
-			if (recipientInfo.Attachments != null)
-			{
-				foreach (var attachment in recipientInfo.Attachments)
-				{
-					if (File.Exists(attachment.Path))
-					{
-						var fileStream = new StreamReader(attachment.Path);
-						if (!string.IsNullOrEmpty(attachment.FileName))
-							mailMessage.Attachments.Add(new Attachment(fileStream.BaseStream, attachment.FileName, Helpers.GetMediaType(attachment.Path)));
-						else
-							mailMessage.Attachments.Add(new Attachment(fileStream.BaseStream, Path.GetFileName(attachment.Path), Helpers.GetMediaType(attachment.Path)));
-					}
+						mailMessage.Attachments.Add(new Attachment(fileStream.BaseStream, Path.GetFileName(attachment.Path), Helper.GetMediaType(attachment.Path)));
 				}
 			}
 

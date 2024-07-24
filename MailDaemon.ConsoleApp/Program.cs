@@ -222,7 +222,10 @@ namespace MailDaemon.ConsoleApp
 
 					// display mail sending process
                     counter++;
-                    Console.ForegroundColor = ConsoleColor.White;
+                    if (recipient.Skip.GetValueOrDefault())
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+					else
+                        Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine($"({counter}) {recipient.Company?.ToUpper()} {recipient.Name}");
                     Console.WriteLine($"Mail: {recipient.Address}");
 					Console.WriteLine($"Subject: {mailMessage.Subject}");
@@ -235,8 +238,26 @@ namespace MailDaemon.ConsoleApp
 					if (!string.IsNullOrEmpty(recipient.MailBodyTemplateFilePath) && recipient.MailBodyTemplateFilePath != mailDaemonService.MailProfile.MailBodyTemplateFilePath)
     					recipientReportInfo.AppendLine($"<div>Template: {recipient.MailBodyTemplateFilePath}</div>");
 
+                    // recipient related attachments use at first
+                    if (recipient.Attachments != null)
+                    {
+                        foreach (var attachment in recipient.Attachments)
+                        {
+                            if (File.Exists(attachment.Path))
+                            {
+                                Console.WriteLine($"\tAttachment: \"{attachment.Path}\"");
+                                recipientReportInfo.AppendLine($"<div style=\"padding-left: 40px\">Attachment: \"{attachment.Path}\"</div>");
+                            }
+                            else
+                            {
+                                DisplayWarningMessage($"\tAttachment: file \"{attachment.Path}\" not exists.");
+                                recipientReportInfo.AppendLine($"<div style=\"padding-left: 40px; color: #aa0000\">Attachment: file \"{attachment.Path}\" not exists.</div>");
+                            }
+                        }
+                    }
+
                     // attachments
-					if (mailDaemonService.MailProfile.Attachments != null)
+                    if (mailDaemonService.MailProfile.Attachments != null)
 					{
 						foreach (var attachment in mailDaemonService.MailProfile.Attachments)
 						{
@@ -249,24 +270,6 @@ namespace MailDaemon.ConsoleApp
 							{
 								DisplayWarningMessage($"\tAttachment: file \"{attachment.Path}\" not exists.");
 								recipientReportInfo.AppendLine($"<div style=\"padding-left: 40px\">Attachment: file \"{attachment.Path}\" not exists.</div>");
-							}
-						}
-					}
-
-					// recipient related attachments
-					if (recipient.Attachments != null)
-					{
-						foreach (var attachment in recipient.Attachments)
-						{
-							if (File.Exists(attachment.Path))
-							{
-								Console.WriteLine($"\tAttachment: \"{attachment.Path}\"");
-								recipientReportInfo.AppendLine($"<div style=\"padding-left: 40px\">Attachment: \"{attachment.Path}\"</div>");
-							}
-							else
-							{
-								DisplayWarningMessage($"\tAttachment: file \"{attachment.Path}\" not exists.");
-								recipientReportInfo.AppendLine($"<div style=\"padding-left: 40px; color: #aa0000\">Attachment: file \"{attachment.Path}\" not exists.</div>");
 							}
 						}
 					}
@@ -291,7 +294,10 @@ namespace MailDaemon.ConsoleApp
                         Console.ResetColor();
                         try
                         {
-                            var previewFilePath = Path.Combine(PreviewsDirPath, $"{recipient.Address}{Path.GetExtension(recipient.MailBodyTemplateFilePath)}");
+                            var fileNamePrefix = "";
+							if (recipient.Skip.GetValueOrDefault())
+                                fileNamePrefix = "(skipped)_";
+                            var previewFilePath = Path.Combine(PreviewsDirPath, $"{fileNamePrefix}{recipient.Address}{Path.GetExtension(recipient.MailBodyTemplateFilePath)}");
                             File.WriteAllText(previewFilePath, mailMessage.Body);
                         }
                         catch (Exception ex)
@@ -352,7 +358,7 @@ namespace MailDaemon.ConsoleApp
             var report = GenerateReport(mailDaemonService, recipientsReport);
             try
             {
-                var reportFilePath = Path.Combine(ReportsDirPath, $"report_{Path.GetFileName(mailDaemonService.MailProfileFilename)}.html");
+                var reportFilePath = Path.Combine(ReportsDirPath, $"report_{Path.GetFileName(mailDaemonService.MailProfileFilename)}_{DateTime.Now:dd.MM.yyyy_HH-mm}.html");
                 File.WriteAllText(reportFilePath, report);
             }
             catch (Exception ex)
