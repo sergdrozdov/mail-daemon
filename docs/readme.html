@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<title>Sergey Drozdov - Mail Daemon</title>
+	<link rel="stylesheet" type="text/css" href="../../task.css" />
+</head>   
+<body>
+	<div class="container">
+		<h1>Mail Daemon</h1>
+		<a href="./">«« Back</a>
+		<div style="display: table; width: 100%">
+			<div style="display: table-row">
+				<div style="display: table-cell">
+					<div class="header">Task</div>
+					<p>
+						Create mail sending utility with configurable settings.
+					</p>
+
+					<div class="header">Source code</div>
+					<p>						
+						&bull; GitHub: <a href="https://github.com/sergdrozdov/mail-daemon">https://github.com/sergdrozdov/mail-daemon</a>
+					</p>
+					
+					<div class="header">Configuration</div>
+					
+					<div class="small">
+						<strong>App.config</strong>
+					</div>
+					Change <em>MailProfile</em> value to use a suitable mail configuration.
+					<code>&lt;add key="MailProfile" value="mailSettings_Default.json" /&gt;</code>
+				
+					<br/>
+					<div class="small">
+						<strong>Folders</strong>
+					</div>
+					<em>MailProfiles</em> &ndash; folder to store JSON mail profiles.<br/>
+					<em>MailTemplates</em> &ndash; folder to store mail templates.
+					
+					<br/><br/>
+					<div class="small">
+						<strong>mailSettings_Default.json</strong>
+					</div>
+	<code>
+	{<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-important">"sender"</span>:<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-important">"address"</span>: "&lt;mail address&gt;",<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name": "&lt;name&gt;"<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;},<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-important">"subject"</span>: "&lt;subject&gt;",<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-important">"template"</span>: "&lt;path to mail template&gt;",<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;"attachments": [<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{	<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-important">"path"</span>: "&lt;path to file&gt;",<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"filename": "&lt;file name&gt;"<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;],<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-important">"recipients"</span>: [<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-important">"address"</span>: "&lt;mail address&gt;",<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name": "&lt;name&gt;",<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"subject": "&lt;subject <em>override parent</em>&gt;",<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"company": "&lt;company&gt;"<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"template": "&lt;path to mail template <em>override parent</em>&gt;"<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"attachments": [<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{	<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-important">"path"</span>: "&lt;path to file&gt;",<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"filename": "&lt;file name&gt;"<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;],<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;]<br/>
+	}
+	</code>
+					<br/>
+					<div class="header">Text placeholders</div>
+					<div>{PERSON_NAME} &ndash; recipient name.</div>
+					<div>{COMPANY_NAME} &ndash; recipient company name.</div>
+					<br/>
+					<div class="header">Validation mode</div>
+					Run Mail Daemon with attribute -v to validate JSON mail profile: no any mail sending, just validation.
+					<code>MailDaemon.exe -v</code>
+					<br/>
+					Run Mail Daemon with attributes -v -d to validate JSON mail profile: no any <em>recipient</em> mail sending, just validation and sending <em>demo mail to sender address</a>.
+					<code>MailDaemon.exe -v -d</code>
+					<br/>
+					<img width="680" height="300" alt="Mail Daemon validation" src="MailDaemon.png" />
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
