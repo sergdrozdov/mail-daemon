@@ -52,9 +52,14 @@ namespace MailDaemon.Core
 
 		public string ReadMailBodyTemplate(string filePath)
 		{
-			try
+            if (string.IsNullOrEmpty(filePath))
+            {
+                throw new ArgumentException("Mail body template file path cannot be empty.");
+            }
+
+            try
 			{
-                if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
+                if (File.Exists(filePath))
                 {
                     using (var sr = new StreamReader(filePath))
                     {
